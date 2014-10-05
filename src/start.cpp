@@ -45,9 +45,6 @@ using namespace boost::property_tree;
 typedef pcl::PointXYZRGBNormal PointT;
 typedef pcl::PointCloud<PointT>::Ptr CloudT;
 
-
-
-ofstream myfile;
 std::vector<cv::Mat> image_depth;
 std::vector<cv::Mat> image_rgb;
 std::vector<ros::Time> time_vector;
@@ -121,29 +118,18 @@ void loadBag(const std::string &filename)
 	//	std::cout << "time:stamp: " << time_stamp << std::endl;
 	//
 
-	std::cout << "*************************************************" << std::endl;
 	int _size = image_depth.size();
 	if (_size > image_rgb.size()) _size = image_rgb.size();
 	//*************************************************************
 	ros::Time t (1408368397, 740000000);
-	int _index = 0; //findClosestFrameNumber(t, time_vector);
-	std::cout << "original: " << t << ":::: closes: " << time_vector[_index] << std::endl;
-
+	int _index = findClosestFrameNumber(t, time_vector);
 	getPose(_index);
-
-//	ros::Time t2 (1408368401, 969000000);
-//	_index = findClosestFrameNumber(t2, time_vector);
-//	std::cout << "original: " << t2 << ":::: closes: " << time_vector[_index] << std::endl;
-//
-//	getPose(_index);
-
 
 	bag.close();
 }
 
 void getPose(int i){
 	std::cout << "------" << i << "--------" << std::endl;
-	myfile << time_vector[i] << std::endl;
 	std::cout << time_vector[i] << std::endl;
 	cv::Mat_<float> _depth = image_depth[i];
 	cv::Mat_<cv::Vec3b> _rgb = image_rgb[i];
@@ -178,9 +164,9 @@ void getPose(int i){
 			cloud->push_back(p);
 		}
 	}
-	std::stringstream cloud_name;
-	cloud_name << i << "some_cloud.pcd";
-	pcl::io::savePCDFile(cloud_name.str(), *cloud);
+//	std::stringstream cloud_name;
+//	cloud_name << i << "some_cloud.pcd";
+//	pcl::io::savePCDFile(cloud_name.str(), *cloud);
 
 	std::vector<std::string> objects;
 	//objects.push_back("/home/lilita/ACAT_git/PickAndPlace/Jar_PotYellow/Jar.pcd");
@@ -205,12 +191,11 @@ void getPose(int i){
 		T[8] = -6.99770972e-02;
 		T[9] = -8.39475930e-01;
 		T[10] = -5.38872302e-01;
-		T[11] = 5.04855752e-01 * k;//5.40215135e-01 * k;
+		T[11] = 5.04855752e-01 * k;
 		T[12] = 0;
 		T[13] = 0;
 		T[14] = 0;
 		T[15] = 1;
-		//       std::cout << T << "\n" << std::endl;
 
 		KMatrix<double> transformed = T * pose ;
 
@@ -221,12 +206,6 @@ void getPose(int i){
 		std::cout << transformed[3]/1000 << "\t" << transformed[7]/1000 << "\t" << transformed[11]/1000 << std::endl;
 		std::cout << "quaternions: " << quaternion << std::endl;
 
-
-		myfile << transformed << "\n" << std::endl;
-
-
-
-		std::cout << "-------------------------------------" << std::endl;
 	}
 }
 
@@ -299,10 +278,7 @@ KMatrix<> detect (CloudT scene, std::vector<std::string> objects){
 
 int main(int argc, char **argv)
 {
-
-	myfile.open ("data.txt");
 	loadBag(argv[1]);
-	myfile.close();
 }
 
 int findClosestFrameNumber(ros::Time t, std::vector<ros::Time> vector){
