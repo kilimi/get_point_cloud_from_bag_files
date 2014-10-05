@@ -1,0 +1,19 @@
+# REQUEST
+# Input scene
+sensor_msgs/PointCloud2 cloud
+
+---
+
+# RESPONSE
+
+# Poses of detected objects, size equal to size(labels_int)*16
+geometry_msgs/Transform[] poses
+
+# Indices of detected objects, can be used to associate each detection to an object point cloud inside objects
+uint32[] labels_int
+
+# Object point clouds, can be indexed by labels_int
+sensor_msgs/PointCloud2[] objects
+
+# Inlier fractions [0,1] for each detection, only set after global estimation!
+float64[] inlierfracs
