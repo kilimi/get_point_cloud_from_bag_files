@@ -53,7 +53,6 @@ std::vector<std::string> objects;
 bool visualize;
 bool table;
 bool gravity;
-//bool reverse;
 bool planar;
 bool verbose;
 
@@ -283,7 +282,6 @@ int main(int argc, const char **argv)
 	po.addPositional("nanoseconds", "ros time nano seconds");
 
 	po.addPositional("calibration", "calibration matrix");
-
 
 	// Parse and print
 	if ( !po.parse(argc, argv) )
